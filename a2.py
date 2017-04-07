@@ -1,14 +1,18 @@
 import numpy as np
+from scipy.sparse import *
+from sklearn.utils.extmath import randomized_svd
+from sklearn.decomposition import TruncatedSVD
 
 def main():
     n = 444075
     f = np.loadtxt('txTripletsCounts.txt', dtype=int)
-    M = np.empty([n,n])
+    M = coo_matrix((f[:,2], (f[:,0], f[:,1])), shape=(n, n))
 
-    for l in f:
-        sender = l[0]
-        receiver = l[1]
-        num_trans = l[2]
-        M[sender, receiver] = num_trans
+    svd = TruncatedSVD(n_components=11)
+    X = svd.fit_transform(M)
+    print X
+    print X.shape
+    print svd.explained_variance_ratio_
+
 
 main()
